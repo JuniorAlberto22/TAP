@@ -1,14 +1,10 @@
 let ObjectID =  require('mongodb').ObjectID;
-const itemRoutes = require('./item_routes');
 
+module.exports = function(app, dbConnect){
 
-module.exports = function(app, db){
-    let dbConnect = db.db('products');
-    let collection = dbConnect.collection('products');
+    let collection = dbConnect.collection('itens');
 
-    itemRoutes(app, dbConnect);
-
-    app.get('/products/:id', (req, res) => {
+    app.get('/item/:id', (req, res) => {
         let id = req.params.id;
         let details = {'_id' : new ObjectID(id)};
         collection.findOne(details, (err, result) => {
@@ -20,10 +16,8 @@ module.exports = function(app, db){
         });
     });
 
-    app.get('/products', (req, res) => {
-        let id = req.params.id;
-        let details = {};
-        collection.find().toArray( (err, results) => {
+    app.get('/itens', (req, res) => {
+        collection.find().toArray((err, results) => {
            if(err){
                 res.send({'error' : 'an error has ocurred'});
            } else {
@@ -32,40 +26,42 @@ module.exports = function(app, db){
         });
     });
 
-    app.put('/products/:id', (req, res) => {
+    app.put('/item/:id', (req, res) => {
         let id = req.params.id;
-        let product = {
+        let item = {
             name : req.body.name,
-            preco : req.body.preco
+            efect : req.body.efect,
+            efectPower : req.body.efectPower
         };
         let details = {'_id' : new ObjectID(id)};
-        collection.update(details, product, (err, result) => {
+        collection.update(details, item, (err, result) => {
            if(err){
                 res.send({'error' : 'an error has ocurred'});
            } else {
-                res.send('Product ' + id + ' updated !');
+                res.send('Item ' + id + ' updated !');
            }
         });
     });
 
-    app.delete('/products/:id', (req, res) => {
+    app.delete('/item/:id', (req, res) => {
         let id = req.params.id;
         let details = {'_id' : new ObjectID(id)};
         collection.remove(details, (err, result) => {
            if(err){
                 res.send({'error' : 'an error has ocurred'});
            } else {
-                res.send('Product ' + id + ' deleted !');
+                res.send('Item ' + id + ' deleted !');
            }
         });
     });
 
-    app.post('/products', (req, res) =>{
-        let product = {
+    app.post('/item', (req, res) =>{
+        let item = {
             name : req.body.name,
-            preco : req.body.preco
+            efect : req.body.efect,
+            efectPower : req.body.efectPower
         };
-        collection.insert(product, (err, result) => {
+        collection.insert(item, (err, result) => {
             if(err){
                 res.send({'error' : 'an error has ocurred'});
             } else {
